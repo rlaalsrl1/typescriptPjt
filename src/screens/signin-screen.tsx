@@ -10,25 +10,34 @@ import { auth } from "../firebaseConfig";
 import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
 import { env } from "process";
+import EmailSignUpBtn from "../components/EmailSignUpBtn";
+import GoogleSignUpBtn from "../components/GoogleSignUpBtn";
 // import LogoImg from "../assets/images/DaelimX_Title.png"
 //styles-component 를 통한 css 구성
 const Container = styled.div`
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   align-items: center;
+  justify-items: center;
   padding: 30px;
+  /* 특정 화면 너비가 되었을 때 실행*/
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;
 //화면 타이틀 텍스트
 const Title = styled.h1`
   color: white;
-  font-size: 25px;
+  font-size: 30px;
   font-weight: 600;
+  margin-bottom: 20px;
 `;
 //화면 타이틀 로고
 const Logo = styled.img`
-  width: 400px;
-  height: 200px;
+  width: 100%;
+  max-width: 550px;
+  height: auto;
 `;
 //ID/PW 텍스트 Input Field(Form)
 //ㄴ1. Form(텍스트 인풋 필드를  담을 공간)
@@ -60,7 +69,8 @@ const InputTitle = styled.p`
 `;
 const SigninBtn = styled.div`
   padding: 10px 15px;
-  background-color: #1f8acc;
+  background-color: white;
+  color: black;
   border-radius: 20px;
   cursor: pointer;
   margin-top: 15px;
@@ -85,6 +95,32 @@ const Guide = styled.span`
   text-align: center;
   margin-top: 30px;
   font-size: 14px;
+  a {
+    color: #49eb08;
+    font-weight: bold;
+  }
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+//로그인 / 가입 버튼 구분
+const Divider = styled.p`
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-size: 15px;
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid white;
+    margin: 30px 5px;
+  }
+`;
+const GuideTitle = styled.p`
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
 `;
 //실제 페이지를 구성하는 code
 export default () => {
@@ -175,8 +211,9 @@ export default () => {
   return (
     <Container>
       <Logo src={`${process.env.PUBLIC_URL}/DaelimX_Title.png`} />
-      <Title>로그인</Title>
+
       <Form>
+        <Title>로그인</Title>
         <InputTitle>이메일*</InputTitle>
         <Input
           onChange={onChange}
@@ -198,9 +235,11 @@ export default () => {
           {loading ? "로딩 중..." : "로그인"}
         </SigninBtn>
         <ErrorMsg>{error}</ErrorMsg>
+        <Divider>또는</Divider>
         <Guide>
-          계정 만들기
-          <Link to="/signup">회원가입</Link>
+          <GuideTitle>아직 계정이 없다면?</GuideTitle>
+          <EmailSignUpBtn />
+          <GoogleSignUpBtn />
         </Guide>
       </Form>
     </Container>
