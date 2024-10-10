@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Home from "./screens/home";
 import Profile from "./screens/Profile";
@@ -7,6 +7,9 @@ import SignupScreen from "./screens/signup-screen";
 import SignupScreenEx from "./screens/signup-screen-ex";
 import styled, { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
+import ProtectedRouter from "./components/protected-router";
+import { auth } from "./firebaseConfig";
+import LoadingScreen from "./screens/loading-screen";
 
 //react-router-dom을 활용한 Page 관리
 //- Page : home, profile, signin, signup
@@ -16,11 +19,19 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <Home />,
+        element: (
+          <ProtectedRouter>
+            <Home />
+          </ProtectedRouter>
+        ),
       },
       {
         path: "profile",
-        element: <Profile />,
+        element: (
+          <ProtectedRouter>
+            <Profile />
+          </ProtectedRouter>
+        ),
       },
     ],
   },
@@ -44,7 +55,19 @@ const Container = styled.div`
 `;
 
 function App() {
-  return (
+  const [loading, setLoading] = useState<boolean>(true);
+  const isLogin = async () => {
+    await auth.authStateReady();
+    setLoading(false);
+  };
+  useEffect(() => {
+    //초기화
+    //
+    isLogin();
+  }, []);
+  return loading ? (
+    <LoadingScreen />
+  ) : (
     <Container className="App">
       <GlobalStyle />
       <RouterProvider router={router}></RouterProvider>
