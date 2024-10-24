@@ -81,7 +81,7 @@ export default App;
 const GlobalStyle = createGlobalStyle`
   ${reset}
   body{
-    background-color: black;
-    color: white;
+    background-color: burlywood;
+    color: black;
   }
 `;

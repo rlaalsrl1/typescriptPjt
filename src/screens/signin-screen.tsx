@@ -210,7 +210,7 @@ export default () => {
   //페이지 레이아웃(Design)반환
   return (
     <Container>
-      <Logo src={`${process.env.PUBLIC_URL}/DaelimX_Title.png`} />
+      <Logo src={`${process.env.PUBLIC_URL}/Daelim.png`} />
 
       <Form>
         <Title>로그인</Title>
