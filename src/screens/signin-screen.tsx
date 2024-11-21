@@ -17,7 +17,7 @@ import GoogleSignUpBtn from "../components/GoogleSignUpBtn";
 const Container = styled.div`
   height: 100%;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   align-items: center;
   justify-items: center;
   padding: 30px;
@@ -28,16 +28,21 @@ const Container = styled.div`
 `;
 //화면 타이틀 텍스트
 const Title = styled.h1`
-  color: white;
+  color: black;
   font-size: 30px;
   font-weight: 600;
   margin-bottom: 20px;
 `;
 //화면 타이틀 로고
 const Logo = styled.img`
-  width: 100%;
+  width: 700px;
   max-width: 550px;
   height: auto;
+`;
+const Light = styled.img`
+  width: 70px;
+  height: 120px;
+  margin-top: 0;
 `;
 //ID/PW 텍스트 Input Field(Form)
 //ㄴ1. Form(텍스트 인풋 필드를  담을 공간)
@@ -46,13 +51,16 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   width: 400px;
+  padding: 10px;
+
+  border-radius: 20px;
+  background-color: #afc26a;
 `;
 //ㄴ2. 각각(ID, PW)의 Input Field
 const Input = styled.input`
   padding: 10px 20px;
   border-radius: 10px;
   border: none;
-
   &::placeholder {
     font-size: 0.8em;
   }
@@ -210,7 +218,10 @@ export default () => {
   //페이지 레이아웃(Design)반환
   return (
     <Container>
-      <Logo src={`${process.env.PUBLIC_URL}/Daelim.png`} />
+      <Logo src={`${process.env.PUBLIC_URL}/TypeScript-logo.jpg`} />
+      <div>
+        <Light src={`${process.env.PUBLIC_URL}/Light.png`} />
+      </div>
 
       <Form>
         <Title>로그인</Title>

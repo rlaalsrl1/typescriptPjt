@@ -10,28 +10,28 @@ import reset from "styled-reset";
 import ProtectedRouter from "./components/protected-router";
 import { auth } from "./firebaseConfig";
 import LoadingScreen from "./screens/loading-screen";
+import Layout from "./screens/layout";
+import ErrorRouterScreen from "./screens/error-router-screen";
 
 //react-router-dom을 활용한 Page 관리
 //- Page : home, profile, signin, signup
 const router = createBrowserRouter([
   {
     path: "/",
+    element: (
+      <ProtectedRouter>
+        <Layout />
+      </ProtectedRouter>
+    ),
+    errorElement: <ErrorRouterScreen />,
     children: [
       {
         path: "",
-        element: (
-          <ProtectedRouter>
-            <Home />
-          </ProtectedRouter>
-        ),
+        element: <Home />,
       },
       {
         path: "profile",
-        element: (
-          <ProtectedRouter>
-            <Profile />
-          </ProtectedRouter>
-        ),
+        element: <Profile />,
       },
     ],
   },
@@ -50,8 +50,10 @@ const router = createBrowserRouter([
 ]);
 
 const Container = styled.div`
-  width: 100vm;
+  width: 100%;
   height: 100vh;
+  display: flex;
+  justify-content: center;
 `;
 
 function App() {
@@ -81,7 +83,7 @@ export default App;
 const GlobalStyle = createGlobalStyle`
   ${reset}
   body{
-    background-color: burlywood;
+    background-color: white;
     color: black;
   }
 `;
