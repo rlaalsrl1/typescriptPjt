@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import styled from "styled-components";
 import { auth, firestore } from "../firebaseConfig";
-import { Post } from "../types/postinput.type";
+import { IPost } from "../types/postinput.type";
 import { addDoc, collection } from "firebase/firestore";
 import { Link } from "react-router-dom";
 
@@ -124,12 +124,13 @@ export default () => {
       //-게시글 작성자 닉네임(user)
       //-게시글 작성자 uid(user)
       //-이미지
-      const myPost: Post = {
+      const myPost: IPost = {
         //키 : 값,
         post: post,
-        createAt: Date.now(), //UTC
-        nickName: user.displayName || "익명",
+        createdAt: Date.now(), //UTC
+        nickname: user.displayName || "익명",
         userId: user.uid,
+        email: ""
       };
       //3.Firebase에 전달
       await addDoc(collection(firestore, "posts"), myPost);
