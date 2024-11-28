@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { auth, firestore } from "../firebaseConfig";
 import { IPost } from "../types/postinput.type";
 import { addDoc, collection } from "firebase/firestore";
-import { Link } from "react-router-dom";
 
 const Form = styled.form`
   display: flex;
@@ -13,7 +12,10 @@ const Form = styled.form`
   border: 1px solid #1c1a1a;
   padding: 20px 5px;
 `;
-
+const Profile = styled.div`
+  background-color: tomato;
+  width: 30px;
+`;
 const PostArea = styled.div`
   flex: 1;
 `;
@@ -35,29 +37,27 @@ const TextArea = styled.textarea`
   &::placeholder {
     color: #1f2020;
   }
-`;
-const Question = styled.p`
-  margin-top: 10px;
-  margin-bottom: 10px;
-  background-color: gold;
-  border-radius: 20px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  font-size: large;
-  font-weight: 600;
-`;
-const RadioButton = styled.div`
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-`;
-const BottomMenu = styled.div`
-  display: flex;
-  justify-content: right;
+  //텍스트아레아 크기변동 안됨
 `;
 
-const SubmitButton = styled.input`
+const BottomMenu = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+const AttachFileButton = styled.label`
+  background-color: firebrick;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 15px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+`;
+const AttachFileInput = styled.input`
+  display: none;
+`;
+const SubminButton = styled.input`
   background-color: firebrick;
   color: white;
   border: none;
@@ -65,7 +65,6 @@ const SubmitButton = styled.input`
   border-radius: 15px;
   font-size: 15px;
   font-weight: 600;
-
   cursor: pointer;
   &:hover,
   &:active {
@@ -77,6 +76,7 @@ export default () => {
   //1.작성한 텍스트,업로드한 이미지
   const [post, setPost] = useState<string>("");
   const [file, setFile] = useState<File>();
+  const [loading, setLoading] = useState<boolean>();
   //1-a. TextArea 의 정보를 담을 Ref생성
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   //2.작성한/변경된 텍스트를 State에 저장
@@ -110,6 +110,7 @@ export default () => {
     //페이지 렌더링을 막고, 제출가능하도록 페이지 유지
     e.preventDefault();
     //---------Loading Start--------
+    setLoading(true);
     try {
       //0.[방어코드] : 로그인하지않았거나, 게시글 내용일 없거나... 실행시키지 않음
       const user = auth.currentUser;
@@ -130,14 +131,18 @@ export default () => {
         createdAt: Date.now(), //UTC
         nickname: user.displayName || "익명",
         userId: user.uid,
-        email: ""
+        email : user.email || ""
       };
       //3.Firebase에 전달
       await addDoc(collection(firestore, "posts"), myPost);
+
+      //4.게시글 작성 후, 내가 작성한 게시글은 Reset
+      setPost("");
     } catch (error) {
       //----------Error 발생 시, 예외 처리--------
       console.error(error);
     } finally {
+      setLoading(false);
       //--------Loading End----------
     }
   };
@@ -145,6 +150,8 @@ export default () => {
   //Page Design Rendering
   return (
     <Form onSubmit={(e) => onSubmit(e)}>
+      {/* 프로필 이미지 */}
+      <Profile></Profile>
       {/* 게시글 작성영역 */}
       <PostArea>
         <TextArea
@@ -155,57 +162,20 @@ export default () => {
           maxLength={200}
           placeholder="무슨일이 벌어지고 있나요?"
         />
-
-        {/* Radio Buttons 영역 */}
-        <Question>오늘 다른 사람들에게 친절하게 대했나요?</Question>
-        <RadioButton>
-          <label>
-            <input type="radio" name="give" value="-1" />
-            별로
-          </label>
-          <label>
-            <input type="radio" name="give" value="0" />
-            어느정도
-          </label>
-          <label>
-            <input type="radio" name="give" value="1" />
-            당연하지
-          </label>
-        </RadioButton>
-        <Question>오늘 다른 사람들이 당신에게 친절하게 대했주었나요?</Question>
-        <RadioButton>
-          <label>
-            <input type="radio" name="undergo" value="-1" />
-            별로
-          </label>
-          <label>
-            <input type="radio" name="undergo" value="0" />
-            어느정도
-          </label>
-          <label>
-            <input type="radio" name="undergo" value="1" />
-            당연하지
-          </label>
-        </RadioButton>
-        <Question>오늘 하루는 행복했나요?</Question>
-        <RadioButton>
-          <label>
-            <input type="radio" name="happiness" value="-1" />
-            별로
-          </label>
-          <label>
-            <input type="radio" name="happiness" value="0" />
-            어느정도
-          </label>
-          <label>
-            <input type="radio" name="happiness" value="1" />
-            당연하지
-          </label>
-        </RadioButton>
         <BottomMenu>
-          <Link to={"/profile"}>
-            <SubmitButton type={"submit"} value={"작성하기"} />
-          </Link>
+          <AttachFileButton htmlFor="file">
+            {file ? "업로드 완료" : "사진 업로드"}
+          </AttachFileButton>
+          <AttachFileInput
+            onChange={(e) => onChageFile(e)}
+            type="file"
+            id="file"
+            accept="image/*"
+          />
+          <SubminButton
+            type={"submit"}
+            value={loading ? "업로드 중" : "작성하기"}
+          />
         </BottomMenu>
       </PostArea>
     </Form>
